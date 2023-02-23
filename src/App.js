@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect,useState } from 'react'
+import SingleUser from './components/SingleUser'
+import Users from './components/Users'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+  const [users, setUsers] = useState ([])
+  const [singleUser, setSingleUser] = useState(null)
+
+  useEffect(()=> {
+    const getData = async () => {
+      const response = await fetch('https://jsonplaceholder.typicode.com/users/')
+      const data = await response.json()
+      setUsers(data)
+    }
+    getData()
+  },[])
+
+  const changeSingleUserState = async (id) => {
+    const response =await fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+    const data = await response.json()
+    setSingleUser(data)
+  }
+
+  const setSingleUserToNull = () => {
+    setSingleUser(null)
+  }
+
+  if(!singleUser) {
+    return(
+      <>
+      <Users users={users} changeSingleUserState={changeSingleUserState}/>
+      </>
+    )
+  }
+
+  return <SingleUser singleUser={singleUser} setSingleUserToNull={setSingleUserToNull}/>
+
 }
 
 export default App;
